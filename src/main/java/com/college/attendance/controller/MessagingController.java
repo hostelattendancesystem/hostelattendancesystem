@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/messages")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @Slf4j
 public class MessagingController {
