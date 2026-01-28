@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Attendance Automation</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="logo-section">
+                    <div class="logo-icon">•</div>
+                    <h1 class="logo-text">Attendance Automation</h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <span class="user-name" id="headerUserName">Loading...</span>
+                    <span class="user-role">Student</span>
+                </div>
+                <button class="btn btn-outline btn-sm" id="logoutBtn">
+                    <span>➤</span> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="dashboard-container">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <h2 class="welcome-title">Welcome back, <span id="userName">Student</span></h2>
+                    <p class="welcome-subtitle">Attendance Dashboard</p>
+                </div>
+
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Total Attendance</span>
+                            <span class="stat-value" id="statAttendance">0</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Registered Since</span>
+                            <span class="stat-value" id="statRegistered">-</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Account Status</span>
+                            <span class="stat-value status-badge" id="statStatus">-</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <span class="stat-label">Today's Attendance</span>
+                            <span class="stat-value" id="statToday">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Details -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Profile Information</h3>
+                    </div>
+
+                    <div class="profile-grid">
+                        <div class="profile-item">
+                            <label class="profile-label">Student ID (SIC)</label>
+                            <div class="profile-value-wrapper">
+                                <span class="profile-value" id="profileSic">-</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <label class="profile-label">Email Address</label>
+                            <div class="profile-value-wrapper editable">
+                                <span class="profile-value" id="profileEmail">-</span>
+                                <button class="edit-btn" id="editEmailBtn" title="Edit Email">
+                                    <span>Edit</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <label class="profile-label">Attendance Verified</label>
+                            <div class="profile-value-wrapper">
+                                <span class="profile-value" id="profileVerified">-</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <label class="profile-label">Account Status</label>
+                            <div class="profile-value-wrapper editable">
+                                <span class="profile-value status-badge" id="profileStatus">-</span>
+                                <button class="edit-btn" id="editStatusBtn" title="Change Status">
+                                    <span>Change</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <label class="profile-label">Pause Until</label>
+                            <div class="profile-value-wrapper editable">
+                                <span class="profile-value" id="profilePause">Not Set</span>
+                                <button class="edit-btn" id="editPauseBtn" title="Set Pause Date">
+                                    <span>Set Date</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <label class="profile-label">Last Taken On</label>
+                            <div class="profile-value-wrapper">
+                                <span class="profile-value" id="profileTakenOn">Never</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <label class="profile-label">Registered On</label>
+                            <div class="profile-value-wrapper">
+                                <span class="profile-value" id="profileRegistered">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Section -->
+                <div class="actions-section">
+                    <button class="btn btn-danger" id="deactivateBtn">
+                        Deactivate Account
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Edit Email Modal -->
+        <div id="editEmailModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Update Email Address</h3>
+                    <button class="modal-close" id="closeEmailModal">&times;</button>
+                </div>
+                <form id="editEmailForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="newEmail" class="form-label">New Email Address</label>
+                        <input 
+                            type="email" 
+                            id="newEmail" 
+                            class="form-input" 
+                            placeholder="your.new.email@example.com"
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-text">Send Verification OTP</span>
+                        <span class="btn-loader" style="display: none;">Sending...</span>
+                    </button>
+                </form>
+
+                <!-- OTP Verification -->
+                <div id="emailOtpSection" class="otp-section" style="display: none;">
+                    <div class="otp-info">
+                        <span class="otp-icon">✉</span>
+                        <p>We've sent a verification OTP to your new email address</p>
+                    </div>
+                    <form id="emailOtpForm" class="modal-form">
+                        <div class="form-group">
+                            <label for="emailOtp" class="form-label">Enter OTP</label>
+                            <input 
+                                type="text" 
+                                id="emailOtp" 
+                                class="form-input otp-input" 
+                                placeholder="Enter 6-digit OTP"
+                                maxlength="6"
+                                required
+                            >
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span class="btn-text">Verify & Update</span>
+                            <span class="btn-loader" style="display: none;">Verifying...</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Pause Date Modal -->
+        <div id="editPauseModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Set Pause Date</h3>
+                    <button class="modal-close" id="closePauseModal">&times;</button>
+                </div>
+                <form id="editPauseForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="pauseDate" class="form-label">Pause Until</label>
+                        <input 
+                            type="date" 
+                            id="pauseDate" 
+                            class="form-input" 
+                            required
+                        >
+                        <span class="form-hint">
+                            * You can only select today or future dates
+                            <br>* Cannot select today if attendance is already taken
+                        </span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-text">Update Pause Date</span>
+                        <span class="btn-loader" style="display: none;">Updating...</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Status Modal -->
+        <div id="editStatusModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Change Account Status</h3>
+                    <button class="modal-close" id="closeStatusModal">&times;</button>
+                </div>
+                <form id="editStatusForm" class="modal-form">
+                    <div class="form-group">
+                        <label for="newStatus" class="form-label">Select Status</label>
+                        <select id="newStatus" class="form-input" required>
+                            <option value="ACTIVE">ACTIVE - Attendance will be marked</option>
+                            <option value="PAUSED">PAUSED - Temporarily pause attendance</option>
+                            <option value="DEACTIVATED">DEACTIVATED - Stop all attendance</option>
+                        </select>
+                        <span class="form-hint">
+                            * ACTIVE: Normal attendance marking<br>
+                            * PAUSED: Temporarily stop (use with Pause Until date)<br>
+                            * DEACTIVATED: Permanently stop attendance
+                        </span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-text">Update Status</span>
+                        <span class="btn-loader" style="display: none;">Updating...</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Message Box -->
+        <div id="dashboardMessage" class="toast-message" style="display: none;"></div>
+    </div>
+
+    <!-- Legal Disclaimer Modal -->
+    <div id="legalDisclaimerModal" class="modal" style="display: flex;">
+        <div class="modal-content" style="max-width: 700px; animation: fadeInUp 0.4s ease;">
+            <div class="modal-header" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%); border-bottom: 2px solid rgba(239, 68, 68, 0.3);">
+                <div style="text-align: center; width: 100%;">
+                    <div style="font-size: 48px; margin-bottom: 12px;">⚠</div>
+                    <h3 class="modal-title" style="color: #ef4444; font-size: 24px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin: 0;">IMPORTANT LEGAL NOTICE</h3>
+                </div>
+                <button class="modal-close" id="closeLegalModal" style="position: absolute; top: 20px; right: 20px;">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 32px;">
+                <div style="background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+                    <p style="margin: 0 0 16px; color: var(--text-primary); font-size: 16px; line-height: 1.6;">
+                        <strong style="color: #fbbf24;">This is an ACADEMIC PROJECT for educational purposes only.</strong>
+                    </p>
+                    <p style="margin: 0 0 16px; color: var(--text-secondary); font-size: 15px; line-height: 1.6;">
+                        By using this system, you acknowledge and agree that:
+                    </p>
+                    <ul style="margin: 0; padding-left: 24px; color: var(--text-secondary); font-size: 14px; line-height: 2;">
+                        <li>This is a <strong>STUDENT PROJECT</strong> for testing and evaluation only</li>
+                        <li>You will <strong>NOT</strong> use this for actual daily attendance management</li>
+                        <li>You are <strong>SOLELY RESPONSIBLE</strong> for any consequences</li>
+                        <li>The developer is <strong>NOT LIABLE</strong> for any issues or problems</li>
+                        <li>The developer has the <strong>RIGHT TO SHARE</strong> your data with authorities if any problems arise from college or government</li>
+                        <li>YOU are the <strong>SOLE CASE HOLDER</strong> for any legal/disciplinary actions</li>
+                        <li>You must <strong>INDEMNIFY AND HOLD HARMLESS</strong> the developer</li>
+                        <li>These terms are <strong>BINDING</strong> upon registration</li>
+                    </ul>
+                    <p style="margin: 16px 0 0; color: var(--text-muted); font-size: 13px; font-style: italic;">
+                        For complete terms, visit the registration page.
+                    </p>
+                </div>
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" id="acceptLegalBtn" style="min-width: 200px;">
+                        I Understand
+                    </button>
+                    <p style="margin: 12px 0 0; color: var(--text-muted); font-size: 12px;">
+                        Click outside, press Escape, or click X to close
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+    <script src="js/user-dashboard.js"></script>
+    <script>
+        // Legal Disclaimer Modal Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('legalDisclaimerModal');
+            const closeBtn = document.getElementById('closeLegalModal');
+            const acceptBtn = document.getElementById('acceptLegalBtn');
+
+            // Show modal on page load
+            modal.style.display = 'flex';
+
+            // Close modal function
+            function closeModal() {
+                modal.style.display = 'none';
+            }
+
+            // Close on X button
+            closeBtn.addEventListener('click', closeModal);
+
+            // Close on Accept button
+            acceptBtn.addEventListener('click', closeModal);
+
+            // Close on click outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Close on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.style.display === 'flex') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

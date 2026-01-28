@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Attendance Automation</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-wrapper admin-wrapper">
+        <!-- Header -->
+        <header class="dashboard-header admin-header">
+            <div class="header-left">
+                <div class="logo-section">
+                    <div class="logo-icon">⚙</div>
+                    <h1 class="logo-text">Admin Panel</h1>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="search-wrapper">
+                    <select id="searchType" class="search-select">
+                        <option value="sic">Search by SIC</option>
+                        <option value="email">Search by Email</option>
+                    </select>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Search students..."
+                    >
+                    <button class="btn btn-secondary btn-sm" id="searchBtn">
+                        <span>🔍</span> Search
+                    </button>
+                    <button class="btn btn-outline btn-sm" id="clearSearchBtn" style="display: none;">
+                        <span>✕</span> Clear
+                    </button>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="sendMessageBtn">
+                    <span>✉</span> Send Message
+                </button>
+                <button class="btn btn-outline btn-sm" id="adminLogoutBtn">
+                    <span>➤</span> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <div class="admin-container">
+                <!-- Stats Overview -->
+                <div class="admin-stats">
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <span class="stat-label">Total Students</span>
+                            <span class="stat-value" id="totalStudents">0</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">✓</div>
+                        <div class="stat-content">
+                            <span class="stat-label">Active</span>
+                            <span class="stat-value" id="activeStudents">0</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">⏸</div>
+                        <div class="stat-content">
+                            <span class="stat-label">Paused</span>
+                            <span class="stat-value" id="pausedStudents">0</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="stat-icon">⛔</div>
+                        <div class="stat-content">
+                            <span class="stat-label">Deactivated</span>
+                            <span class="stat-value" id="deactivatedStudents">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Table -->
+                <div class="table-section">
+                    <div class="table-header">
+                        <h3 class="section-title">Student Records</h3>
+                        <button class="btn btn-primary btn-sm" id="refreshBtn">
+                            <span>⟳</span> Refresh
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="students-table" id="studentsTable">
+                            <thead>
+                                <tr>
+                                    <th>Sl. No</th>
+                                    <th>SIC</th>
+                                    <th>Email</th>
+                                    <th>Attendance Count</th>
+                                    <th>Status</th>
+                                    <th>Today's Attendance</th>
+                                    <th>Attendance Verified</th>
+                                    <th>Pause Until</th>
+                                    <th>Last Taken On</th>
+                                    <th>Registered On</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTableBody">
+                                <tr>
+                                    <td colspan="11" class="loading-cell">
+                                        <div class="loading-spinner"></div>
+                                        <span>Loading students...</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Edit Student Modal -->
+        <div id="editStudentModal" class="modal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Student Details</h3>
+                    <button class="modal-close" id="closeEditModal">&times;</button>
+                </div>
+                <form id="editStudentForm" class="modal-form">
+                    <input type="hidden" id="editSlNo">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editSic" class="form-label">Student ID (SIC)</label>
+                            <input 
+                                type="text" 
+                                id="editSic" 
+                                class="form-input" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editEmail" class="form-label">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="editEmail" 
+                                class="form-input" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editAttendanceCount" class="form-label">Attendance Count</label>
+                            <input 
+                                type="number" 
+                                id="editAttendanceCount" 
+                                class="form-input" 
+                                min="0"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select id="editStatus" class="form-input" required>
+                                <option value="ACTIVE">ACTIVE</option>
+                                <option value="PAUSED">PAUSED</option>
+                                <option value="DEACTIVATED">DEACTIVATED</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editIsTaken" class="form-label">Today's Attendance</label>
+                            <select id="editIsTaken" class="form-input" required>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editIsVerified" class="form-label">Attendance Verified</label>
+                            <select id="editIsVerified" class="form-input" required>
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editPauseTill" class="form-label">Pause Until</label>
+                        <input 
+                            type="date" 
+                            id="editPauseTill" 
+                            class="form-input"
+                        >
+                        <span class="form-hint">Leave empty to remove pause date</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Registered On</label>
+                        <input 
+                            type="text" 
+                            id="editAddedOn" 
+                            class="form-input" 
+                            disabled
+                        >
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-outline" id="cancelEditBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-text">Save Changes</span>
+                            <span class="btn-loader" style="display: none;">Saving...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Send Message Modal -->
+        <div id="messageModal" class="modal">
+            <div class="modal-content modal-large">
+                <div class="modal-header">
+                    <h3 class="modal-title">Send Message</h3>
+                    <button class="modal-close" id="closeMessageModal">&times;</button>
+                </div>
+                <form id="messageForm" class="modal-form">
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" id="sendToAll" style="margin-right: 8px;">
+                            Send to All Students
+                        </label>
+                    </div>
+                    
+                    <div class="form-group" id="emailGroup">
+                        <label for="messageEmail" class="form-label">To</label>
+                        <input 
+                            type="email" 
+                            id="messageEmail" 
+                            class="form-input" 
+                            placeholder="student@example.com"
+                            required
+                        >
+                        <span class="form-hint">You can change this email to send to a different student or check "Send to All Students" above</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="messageSubject" class="form-label">Subject</label>
+                        <input 
+                            type="text" 
+                            id="messageSubject" 
+                            class="form-input" 
+                            placeholder="Enter message subject"
+                            required
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="messageBody" class="form-label">Message</label>
+                        <textarea 
+                            id="messageBody" 
+                            class="form-input" 
+                            rows="8" 
+                            placeholder="Enter your message here..."
+                            required
+                        ></textarea>
+                        <span class="form-hint">This message will be sent via email</span>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-outline" id="cancelMessageBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-text">Send Message</span>
+                            <span class="btn-loader" style="display: none;">Sending...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Message Box -->
+        <div id="adminMessage" class="toast-message" style="display: none;"></div>
+    </div>
+
+    <script src="js/admin-dashboard.js"></script>
+</body>
+</html>

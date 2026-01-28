@@ -1,0 +1,65 @@
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Package Files
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE Files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Application Properties (contains sensitive data)
+# Exclude local development properties
+application.properties
+# But include production properties (uses environment variables)
+!application-production.properties
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Docker
+# Note: Dockerfile and .dockerignore should be committed
+
+# Environment variable files (if created locally)
+.env
+.env.local
+*.env
+
+# Test scripts output
+docker-test-output.txt

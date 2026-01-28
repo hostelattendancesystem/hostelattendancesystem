@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - Attendance Automation</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Animated Background -->
+        <div class="animated-bg">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+
+        <!-- Back Button -->
+        <a href="landing.html" class="back-btn">
+            <span>←</span> Back to Home
+        </a>
+
+        <!-- Auth Card -->
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon">●</div>
+                <h1 class="auth-title">Student Portal</h1>
+                <p class="auth-subtitle">Access your attendance dashboard</p>
+            </div>
+
+            <!-- Tab Switcher -->
+            <div class="tab-switcher">
+                <button class="tab-btn active" data-tab="login">Login</button>
+                <button class="tab-btn" data-tab="signup">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <div class="tab-content active" id="login-tab">
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginSic" class="form-label">Student ID (SIC)</label>
+                        <input 
+                            type="text" 
+                            id="loginSic" 
+                            class="form-input" 
+                            placeholder="Enter your SIC"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-text">Send Login OTP</span>
+                        <span class="btn-loader" style="display: none;">Sending...</span>
+                    </button>
+                </form>
+
+                <!-- OTP Verification for Login -->
+                <div id="loginOtpSection" class="otp-section" style="display: none;">
+                    <div class="otp-info">
+                        <span class="otp-icon">✉</span>
+                        <p>We've sent a login OTP to your registered email address</p>
+                    </div>
+                    <form id="loginOtpForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="loginOtp" class="form-label">Enter OTP</label>
+                            <input 
+                                type="text" 
+                                id="loginOtp" 
+                                class="form-input otp-input" 
+                                placeholder="Enter 6-digit OTP"
+                                maxlength="6"
+                                required
+                            >
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span class="btn-text">Verify & Login</span>
+                            <span class="btn-loader" style="display: none;">Verifying...</span>
+                        </button>
+                        <button type="button" class="btn btn-outline btn-block" id="resendLoginOtp">
+                            Resend OTP
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div class="tab-content" id="signup-tab">
+                <form id="signupForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="signupSic" class="form-label">
+                            Student ID (SIC) <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="signupSic" 
+                            class="form-input" 
+                            placeholder="Enter your SIC"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="signupEmail" class="form-label">
+                            Email Address <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="signupEmail" 
+                            class="form-input" 
+                            placeholder="your.email@example.com"
+                            required
+                        >
+                        <span class="form-hint">You'll receive attendance notifications here</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-text">Send Verification OTP</span>
+                        <span class="btn-loader" style="display: none;">Sending...</span>
+                    </button>
+                </form>
+
+                <!-- OTP Verification for Signup -->
+                <div id="signupOtpSection" class="otp-section" style="display: none;">
+                    <div class="otp-info">
+                        <span class="otp-icon">✉</span>
+                        <p>We've sent a verification OTP to <strong id="verifyEmail"></strong></p>
+                    </div>
+                    <form id="signupOtpForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="signupOtp" class="form-label">Enter OTP</label>
+                            <input 
+                                type="text" 
+                                id="signupOtp" 
+                                class="form-input otp-input" 
+                                placeholder="Enter 6-digit OTP"
+                                maxlength="6"
+                                required
+                            >
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span class="btn-text">Verify & Complete Signup</span>
+                            <span class="btn-loader" style="display: none;">Verifying...</span>
+                        </button>
+                        <button type="button" class="btn btn-outline btn-block" id="resendSignupOtp">
+                            Resend OTP
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Message Box -->
+            <div id="authMessage" class="message-box" style="display: none;"></div>
+        </div>
+
+        <!-- Disclaimer Modal -->
+        <div id="disclaimerModal" class="modal">
+            <div class="modal-content modal-large disclaimer-modal">
+                <div class="modal-header disclaimer-header">
+                    <h3 class="modal-title">
+                        <span class="warning-icon">⚠</span>
+                        IMPORTANT LEGAL NOTICE
+                    </h3>
+                </div>
+                
+                <div class="disclaimer-content">
+                    <h4>ACADEMIC PROJECT DISCLAIMER & TERMS OF SERVICE</h4>
+                    <p class="disclaimer-intro">
+                        This Attendance Automation System is an <strong>ACADEMIC PROJECT</strong> developed by an engineering student for educational and demonstration purposes only.
+                    </p>
+
+                    <p class="disclaimer-bold">BY USING THIS SYSTEM, REGISTERING YOUR DATA, OR BYPASSING THIS ACKNOWLEDGMENT PAGE, YOU AUTOMATICALLY AND IRREVOCABLY ACCEPT AND AGREE TO ALL THE FOLLOWING TERMS:</p>
+
+                    <div class="disclaimer-section">
+                        <h5>1. PROJECT PURPOSE & NATURE</h5>
+                        <ul>
+                            <li>This is a <strong>STUDENT PROJECT</strong> created solely for learning, portfolio demonstration, and academic evaluation</li>
+                            <li><strong>NOT</strong> intended, designed, or authorized for commercial use, daily operational purposes, or official attendance management</li>
+                            <li><strong>NOT</strong> a production-ready, enterprise-grade, or officially sanctioned system</li>
+                            <li>This system has <strong>NO AFFILIATION</strong> with any educational institution, college, university, or government body</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section">
+                        <h5>2. USER RESPONSIBILITY & VOLUNTARY PARTICIPATION</h5>
+                        <ul>
+                            <li>You are registering <strong>COMPLETELY VOLUNTARILY</strong> of your own free will to test and evaluate this academic project</li>
+                            <li>You acknowledge this is for <strong>TESTING, DEMONSTRATION, AND EVALUATION PURPOSES ONLY</strong></li>
+                            <li>You will <strong>NEVER</strong> use this system as a substitute for official college attendance systems</li>
+                            <li>You will <strong>CONTINUE TO MANAGE</strong> your actual attendance through official college/institutional channels</li>
+                            <li>You understand that any attendance data in this system is <strong>FOR DEMONSTRATION ONLY</strong> and has no official validity</li>
+                            <li>You are <strong>SOLELY RESPONSIBLE</strong> for ensuring your actual attendance compliance through official means</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section">
+                        <h5>3. COMPLETE DISCLAIMER OF LIABILITY</h5>
+                        <ul>
+                            <li>The developer is <strong>ABSOLUTELY NOT LIABLE</strong> for any issues, errors, consequences, damages, or losses arising from use of this system</li>
+                            <li>You assume <strong>COMPLETE AND TOTAL RESPONSIBILITY</strong> for all outcomes related to attendance management, academic standing, or disciplinary actions</li>
+                            <li>You will <strong>NEVER HOLD THE DEVELOPER RESPONSIBLE</strong> for missed attendance, data loss, system failures, bugs, errors, or any other issues</li>
+                            <li>You acknowledge that this system may contain bugs, errors, security vulnerabilities, incomplete features, or may fail at any time</li>
+                            <li>The developer bears <strong>ZERO LIABILITY</strong> for any academic, financial, legal, or personal consequences you may face</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section">
+                        <h5>4. DATA COLLECTION, STORAGE & SHARING RIGHTS</h5>
+                        <ul>
+                            <li>By registering, your data (SIC, email, attendance records) will be stored in the developer's database</li>
+                            <li>Your data is used solely for demonstration, testing, and project evaluation purposes</li>
+                            <li><strong>IMPORTANT:</strong> If any problem, legal case, complaint, or investigation arises from your college, institution, or government authorities regarding misuse of this system:</li>
+                            <li class="highlight-critical">The developer has the <strong>ABSOLUTE RIGHT</strong> to share your registration details, usage logs, and all associated data with college authorities, law enforcement, or government agencies</li>
+                            <li class="highlight-critical">You and other registered students will be identified as the persons who voluntarily registered and used this system</li>
+                            <li class="highlight-critical">You will be held <strong>SOLELY RESPONSIBLE</strong> for any illegal use, misuse, or violations of college/institutional policies</li>
+                            <li>The developer reserves the right to cooperate fully with any investigation and provide all user data as required by law</li>
+                            <li>No guarantee of data security, privacy, or confidentiality in a testing environment</li>
+                            <li>Data may be reset, modified, deleted, or shared without prior notice</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section">
+                        <h5>5. BYPASS CLAUSE & AUTOMATIC ACCEPTANCE</h5>
+                        <ul>
+                            <li class="highlight-critical"><strong>CRITICAL:</strong> If you attempt to bypass, skip, or circumvent this acknowledgment page through any technical means, browser manipulation, or otherwise:</li>
+                            <li>You are deemed to have <strong>AUTOMATICALLY ACCEPTED</strong> all terms and conditions stated herein</li>
+                            <li>All terms become <strong>IMMEDIATELY BINDING</strong> upon your data being stored in the developer's database</li>
+                            <li>Your registration itself constitutes <strong>IRREVOCABLE ACCEPTANCE</strong> of these terms, regardless of whether you read or acknowledged them</li>
+                            <li>You cannot claim ignorance, unawareness, or non-acceptance of these terms after registration</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section">
+                        <h5>6. COLLEGE & GOVERNMENT LIABILITY PROTECTION</h5>
+                        <ul>
+                            <li class="highlight-critical">If any problem, case, complaint, or legal action arises from your college, university, or government authorities:</li>
+                            <li><strong>YOU</strong> and other registered students are the <strong>SOLE CASE HOLDERS</strong> and responsible parties</li>
+                            <li>The developer is <strong>NOT RESPONSIBLE</strong> and will <strong>NOT BE LIABLE</strong> for any consequences</li>
+                            <li>You agree to <strong>INDEMNIFY AND HOLD HARMLESS</strong> the developer from any claims, lawsuits, penalties, or actions</li>
+                            <li>You will <strong>NOT IMPLICATE</strong> the developer in any disciplinary, legal, or administrative proceedings</li>
+                            <li>You acknowledge that using this system does not exempt you from college attendance policies or regulations</li>
+                            <li>Any violation of college rules or government regulations is <strong>YOUR SOLE RESPONSIBILITY</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section">
+                        <h5>7. LEGAL COMPLIANCE & REGULATORY FRAMEWORK</h5>
+                        <ul>
+                            <li>This project complies with educational fair use and academic research provisions</li>
+                            <li><strong>Information Technology Act, 2000</strong> (Sections 43, 66, 67) - Computer-related offenses, unauthorized access, and data protection</li>
+                            <li><strong>Consumer Protection Act, 2019</strong> - Exclusion for non-commercial, educational, and testing purposes</li>
+                            <li><strong>Indian Contract Act, 1872</strong> (Sections 10, 13, 14) - Voluntary agreement, free consent, and acceptance of terms</li>
+                            <li><strong>Copyright Act, 1957</strong> (Section 52) - Fair use for educational and research purposes</li>
+                            <li><strong>Indian Penal Code, 1860</strong> (Section 420, 463) - User liability for fraud or forgery in attendance records</li>
+                            <li><strong>Personal Data Protection Bill</strong> - Developer's right to share data with authorities for legal compliance</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section">
+                        <h5>8. NO WARRANTY & "AS IS" PROVISION</h5>
+                        <ul>
+                            <li>System provided <strong>"AS IS"</strong> and <strong>"AS AVAILABLE"</strong> without any warranties, express, implied, or statutory</li>
+                            <li>No guarantee of availability, accuracy, reliability, security, or fitness for any purpose</li>
+                            <li>No warranty of merchantability, non-infringement, or suitability</li>
+                            <li>Features may change, be removed, malfunction, or become unavailable without notice</li>
+                            <li>No service level agreements, uptime guarantees, or support commitments</li>
+                            <li>Developer may terminate, suspend, or modify the system at any time without notice</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section">
+                        <h5>9. PROHIBITED USES & MISUSE</h5>
+                        <ul>
+                            <li>You will <strong>NOT</strong> use this system to circumvent official attendance requirements</li>
+                            <li>You will <strong>NOT</strong> rely on this system for official attendance records or verification</li>
+                            <li>You will <strong>NOT</strong> present data from this system as official or authentic to any authority</li>
+                            <li>You will <strong>NOT</strong> use this system to deceive, defraud, or mislead college authorities</li>
+                            <li>You will <strong>NOT</strong> attempt to hack, exploit, or compromise the system</li>
+                            <li>Violation of these prohibitions makes you liable for legal action and full disclosure of your data</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section">
+                        <h5>10. INDEMNIFICATION & HOLD HARMLESS</h5>
+                        <ul>
+                            <li>You agree to <strong>INDEMNIFY, DEFEND, AND HOLD HARMLESS</strong> the developer from any and all:</li>
+                            <li>Claims, demands, lawsuits, or legal proceedings arising from your use of this system</li>
+                            <li>Damages, losses, liabilities, costs, or expenses (including legal fees) resulting from your actions</li>
+                            <li>Violations of college policies, institutional rules, or government regulations</li>
+                            <li>Misuse, abuse, or unauthorized use of the system</li>
+                            <li>This indemnification survives termination of your use and continues indefinitely</li>
+                        </ul>
+                    </div>
+
+                    <div class="disclaimer-section disclaimer-final">
+                        <h5>11. FINAL ACKNOWLEDGMENT & BINDING AGREEMENT</h5>
+                        <p><strong>I HEREBY SOLEMNLY DECLARE, ACKNOWLEDGE, AND CONFIRM THAT:</strong></p>
+                        <ul>
+                            <li>I have read, understood, and <strong>VOLUNTARILY ACCEPT</strong> all terms and conditions stated above</li>
+                            <li>I understand this is a <strong>STUDENT PROJECT</strong> for educational and testing purposes only</li>
+                            <li>I am registering <strong>SOLELY TO TEST AND EVALUATE</strong> the project functionality</li>
+                            <li>I will <strong>NEVER RELY</strong> on this system for actual attendance management</li>
+                            <li>I accept <strong>COMPLETE AND TOTAL RESPONSIBILITY</strong> for all consequences arising from my use</li>
+                            <li>I will <strong>NOT HOLD THE DEVELOPER LIABLE</strong> for any issues, errors, or problems</li>
+                            <li>I understand the developer has the <strong>RIGHT TO SHARE MY DATA</strong> with authorities if problems arise</li>
+                            <li>I acknowledge that <strong>I AM THE SOLE CASE HOLDER</strong> if any legal or disciplinary action occurs</li>
+                            <li>I agree to <strong>INDEMNIFY AND PROTECT</strong> the developer from all claims and liabilities</li>
+                            <li>These terms are <strong>BINDING UPON REGISTRATION</strong>, regardless of acknowledgment or bypass attempts</li>
+                            <li>I understand that any problems or issues are <strong>MY SOLE RESPONSIBILITY</strong>, not the developer's</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="disclaimer-footer">
+                    <label class="disclaimer-checkbox">
+                        <input type="checkbox" id="disclaimerAgree">
+                        <span><strong>I HAVE READ, UNDERSTOOD, AND VOLUNTARILY AGREE</strong> to all the above terms and conditions. I acknowledge that I am solely and completely responsible for any consequences arising from the use of this system. I understand the developer has the right to share my data with authorities if needed, and I will be the sole case holder for any legal or disciplinary actions. The developer bears absolutely no liability.</span>
+                    </label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="disclaimerCancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="disclaimerContinue" disabled>
+                        Agree & Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/user-auth.js"></script>
+</body>
+</html>

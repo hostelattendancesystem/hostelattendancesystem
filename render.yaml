@@ -1,0 +1,74 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: attendance-automation-backend
+    env: docker
+    region: singapore
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    
+    # Health check endpoint
+    healthCheckPath: /actuator/health
+    
+    # Environment variables
+    envVars:
+      # Java Options
+      - key: JAVA_OPTS
+        value: -Xmx512m -Xms256m
+      
+      # Database Configuration (Aiven PostgreSQL)
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://pg-hostelattendancesystem-hostelattendancesystem-1073.h.aivencloud.com:27872/defaultdb?sslmode=require
+      
+      - key: SPRING_DATASOURCE_USERNAME
+        value: avnadmin
+      
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+        # You'll need to add this in Render dashboard as a secret
+      
+      # Email Configuration (Gmail)
+      - key: SPRING_MAIL_HOST
+        value: smtp.gmail.com
+      
+      - key: SPRING_MAIL_PORT
+        value: 587
+      
+      - key: SPRING_MAIL_USERNAME
+        value: hostelattendancesystem@gmail.com
+      
+      - key: SPRING_MAIL_PASSWORD
+        sync: false
+        # You'll need to add this in Render dashboard as a secret
+      
+      # Application Configuration
+      - key: APP_ATTENDANCE_START_TIME
+        value: "19:35"
+      
+      - key: APP_ATTENDANCE_END_TIME
+        value: "21:25"
+      
+      - key: APP_ATTENDANCE_VERIFICATION_DELAY_MIN
+        value: 5
+      
+      - key: APP_ATTENDANCE_VERIFICATION_DELAY_MAX
+        value: 30
+      
+      - key: APP_ATTENDANCE_URL
+        value: https://erp.silicon.ac.in/estcampus/hostel/db_hostel_attendance.php?oper=CHECK_HOSTEL_ATTENDANCE&studentId=
+      
+      # Spring Profile
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      
+      # Timezone
+      - key: TZ
+        value: Asia/Kolkata
+      
+      # JPA Configuration
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+      
+      - key: SPRING_JPA_SHOW_SQL
+        value: false

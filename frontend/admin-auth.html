@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Attendance Automation</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Animated Background -->
+        <div class="animated-bg">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+
+        <!-- Back Button -->
+        <a href="landing.html" class="back-btn">
+            <span>←</span> Back to Home
+        </a>
+
+        <!-- Auth Card -->
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-icon admin-icon">⚙</div>
+                <h1 class="auth-title">Admin Panel</h1>
+                <p class="auth-subtitle">Secure access for administrators</p>
+            </div>
+
+            <!-- Admin Login Form -->
+            <div class="tab-content active" id="admin-login-tab">
+                <form id="adminLoginForm" class="auth-form">
+                    <div class="admin-info-box">
+                        <span class="info-icon">🔒</span>
+                        <p>Admin verification OTP will be sent to the registered admin email address.</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span class="btn-text">Send Admin OTP</span>
+                        <span class="btn-loader" style="display: none;">Sending...</span>
+                    </button>
+                </form>
+
+                <!-- OTP Verification for Admin -->
+                <div id="adminOtpSection" class="otp-section" style="display: none;">
+                    <div class="otp-info">
+                        <span class="otp-icon">✉</span>
+                        <p>We've sent an admin verification OTP to your registered email address.</p>
+                    </div>
+                    <form id="adminOtpForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="adminOtp" class="form-label">Enter Admin OTP</label>
+                            <input 
+                                type="text" 
+                                id="adminOtp" 
+                                class="form-input otp-input" 
+                                placeholder="Enter 6-digit OTP"
+                                maxlength="6"
+                                required
+                            >
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <span class="btn-text">Verify & Access Admin Panel</span>
+                            <span class="btn-loader" style="display: none;">Verifying...</span>
+                        </button>
+                        <button type="button" class="btn btn-outline btn-block" id="resendAdminOtp">
+                            Resend OTP
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Message Box -->
+            <div id="adminAuthMessage" class="message-box" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script src="js/admin-auth.js"></script>
+</body>
+</html>
