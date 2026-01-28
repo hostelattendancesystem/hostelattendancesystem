@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Backend API Test Tool</h1>
+    <p>Test your Render backend API to diagnose issues</p>
+
+    <!-- Health Check Test -->
+    <div class="test-section">
+        <h2>1. Health Check Test</h2>
+        <p>Test if the backend is running and accessible</p>
+        <button onclick="testHealth()">Test Health Endpoint</button>
+        <div id="healthResult" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- CORS Test -->
+    <div class="test-section">
+        <h2>2. CORS Test</h2>
+        <p>Test if CORS is configured correctly</p>
+        <button onclick="testCORS()">Test CORS</button>
+        <div id="corsResult" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- Student API Test -->
+    <div class="test-section">
+        <h2>3. Student API Test</h2>
+        <p>Test if student endpoints are working</p>
+        <input type="text" id="testSic" placeholder="Enter SIC (e.g., TEST123)" value="TEST123">
+        <button onclick="testGetStudent()">Get Student</button>
+        <div id="studentResult" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- OTP Test -->
+    <div class="test-section">
+        <h2>4. OTP Send Test</h2>
+        <p>Test OTP sending (this will actually send an email if it works)</p>
+        <input type="text" id="otpSic" placeholder="SIC" value="TEST123">
+        <input type="email" id="otpEmail" placeholder="Email" value="test@example.com">
+        <button onclick="testSendOTP()">Send Login OTP</button>
+        <div id="otpResult" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- Console Log -->
+    <div class="test-section">
+        <h2>📋 Console Log</h2>
+        <div id="console" class="result info" style="display:block;">
+            Waiting for tests...
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://hostelattendancesystem.onrender.com';
+        
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            console.innerHTML += `\n[${timestamp}] ${message}`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function showResult(elementId, message, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${isSuccess ? 'success' : 'error'}`;
+            element.style.display = 'block';
+        }
+
+        async function testHealth() {
+            log('Testing health endpoint...');
+            try {
+                const response = await fetch(`${API_BASE_URL}/actuator/health`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                const data = await response.json();
+                log(`✅ Health check successful: ${JSON.stringify(data)}`);
+                showResult('healthResult', `Status: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`, true);
+            } catch (error) {
+                log(`❌ Health check failed: ${error.message}`);
+                showResult('healthResult', `Error: ${error.message}\n\nThis might be a CORS issue or network problem.`, false);
+            }
+        }
+
+        async function testCORS() {
+            log('Testing CORS configuration...');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/students`, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Credentials': response.headers.get('Access-Control-Allow-Credentials')
+                };
+                
+                log(`✅ CORS preflight successful`);
+                showResult('corsResult', `Status: ${response.status}\nCORS Headers:\n${JSON.stringify(corsHeaders, null, 2)}`, true);
+            } catch (error) {
+                log(`❌ CORS test failed: ${error.message}`);
+                showResult('corsResult', `Error: ${error.message}\n\nCORS might be blocking requests from this origin.`, false);
+            }
+        }
+
+        async function testGetStudent() {
+            const sic = document.getElementById('testSic').value;
+            log(`Testing GET /api/students/${sic}...`);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/students/${sic}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Student found: ${JSON.stringify(data)}`);
+                    showResult('studentResult', `Status: ${response.status}\nStudent Data:\n${JSON.stringify(data, null, 2)}`, true);
+                } else if (response.status === 404) {
+                    log(`ℹ️ Student not found (404) - This is normal if SIC doesn't exist`);
+                    showResult('studentResult', `Status: 404 - Student not found\n\nThis is expected if the SIC hasn't been registered yet.`, false);
+                } else {
+                    log(`❌ Unexpected response: ${response.status}`);
+                    showResult('studentResult', `Status: ${response.status}\nError: ${await response.text()}`, false);
+                }
+            } catch (error) {
+                log(`❌ Request failed: ${error.message}`);
+                showResult('studentResult', `Error: ${error.message}\n\nCheck console for details.`, false);
+            }
+        }
+
+        async function testSendOTP() {
+            const sic = document.getElementById('otpSic').value;
+            const email = document.getElementById('otpEmail').value;
+            
+            log(`Testing POST /api/auth/send-login-otp for ${sic}...`);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/send-login-otp`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sic, email })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log(`✅ OTP sent successfully!`);
+                    showResult('otpResult', `Status: ${response.status}\nResponse:\n${JSON.stringify(data, null, 2)}\n\n⚠️ Check the email inbox for the OTP!`, true);
+                } else {
+                    log(`❌ OTP send failed: ${response.status}`);
+                    showResult('otpResult', `Status: ${response.status}\nError:\n${JSON.stringify(data, null, 2)}`, false);
+                }
+            } catch (error) {
+                log(`❌ Request failed: ${error.message}`);
+                showResult('otpResult', `Error: ${error.message}\n\nPossible causes:\n- CORS blocking\n- Network error\n- Backend not responding`, false);
+            }
+        }
+
+        // Auto-run health check on load
+        window.addEventListener('load', () => {
+            log('🚀 Test tool loaded. Click buttons to run tests.');
+            setTimeout(testHealth, 1000);
+        });
+    </script>
+</body>
+</html>
