@@ -14,7 +14,7 @@
     
     <groupId>com.college</groupId>
     <artifactId>attendance-automation</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>College Attendance Automation</name>
     <description>Automated attendance system for college hostel</description>
     
